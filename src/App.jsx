@@ -6,26 +6,33 @@ import { useRef } from 'react';
 
 const JumpingBall = () =>{
   const ballRef = useRef();
-  useFrame(()=>{
+  
+  useFrame(({clock})=>{
     if(ballRef.current){
       ballRef.current.rotation.y += 0.01
       ballRef.current.rotation.x += 0.01
+      ballRef.current.rotation.z += 0.01
+      ballRef.current.position.y += Math.sin(clock.getElapsedTime()) * 0.009
+
     }
   })
   return(
-    <mesh ref={ballRef}>
-      <sphereGeometry args={[0.7, 20, 10]}/>
-      <meshLambertMaterial color='#468585' emissive='#468585'/>
+    <mesh ref={ballRef} >
+      <sphereGeometry args={[0.3, 20, 10]}/>
+      <meshStandardMaterial color='#468585' emissive='#468585' emissiveIntensity={2}/>
     </mesh>
   )
 }
 
 const App = () =>{
   return(
-    <Canvas style={{height:'100vh',width: '100vw',display: 'flex', justifyContent: 'center',alignItems: 'center'}}>
+    <Canvas style={{height:'100vh',width: '100vw',display: 'flex', justifyContent: 'center',alignItems: 'center',background:'black'}} camera={{position:[0,2,5]}}>
       <OrbitControls enablePan enableZoom={false} enableRotate rotateSpeed={2}/>
-      <directionalLight position={[3,5,1]} color={0xF0F0F0} intensity={10}/>
-      <ambientLight  color='#869525' intensity={10}/>
+      
+      <ambientLight  color='#404040' intensity={0.5}/>
+      <directionalLight position={[5,5,5]} color={'white'} intensity={1} castShadow/>
+      <directionalLight position={[-5,-5,-5]} color={'blue'} intensity={0.5} />
+      <pointLight position={[0,2,0]} color='red' intensity={5} distance={5}/>
       
       <JumpingBall/>
     </Canvas>
