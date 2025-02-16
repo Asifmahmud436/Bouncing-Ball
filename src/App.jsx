@@ -1,24 +1,33 @@
 /* eslint-disable react/no-unknown-property */
 import { OrbitControls } from "@react-three/drei";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 
 
 const JumpingBall = () =>{
   const ballRef = useRef();
   
-  useFrame(({clock})=>{
+  const [velocity, setVelocity] = useState(0.05)
+  const gravity = 0.002;
+  const damping = 0.8;
+
+  useFrame(()=>{
     if(ballRef.current){
       ballRef.current.rotation.y += 0.01
       ballRef.current.rotation.x += 0.01
-      ballRef.current.rotation.z += 0.01
-      ballRef.current.position.y += Math.sin(clock.getElapsedTime()) * 0.009
-
+      ballRef.current.rotation.z += 0.03
+      
+      ballRef.current.position.y += velocity
+      setVelocity((prev)=> prev - gravity);
+      
+      if(ballRef.current.position.y < 3){
+        setVelocity((prev) => -prev * damping);
+      }
     }
   })
   return(
     <mesh ref={ballRef} >
-      <sphereGeometry args={[0.3, 20, 10]}/>
+      <sphereGeometry args={[0.4, 20, 10]}/>
       <meshStandardMaterial color='#468585' emissive='#468585' emissiveIntensity={2}/>
     </mesh>
   )
